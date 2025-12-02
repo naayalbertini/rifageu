@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Rifa Som AMVOX</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+
+<header>
+  <img src="img/seminovo.jpeg" class="produto" alt="Som AMVOX">
+  <h1>🎧 RIFA SOM AMVOX SEMINOVO</h1>
+  <div class="valor">R$ 10 por número</div>
+</header>
+
+<div id="numeros"></div>
+
+<div class="formulario">
+  <input id="nome" placeholder="Nome completo">
+  <input id="whatsapp" placeholder="WhatsApp com DDD">
+  <div id="lista"></div>
+  <button onclick="comprar()">Reservar números</button>
+</div>
+
+<!-- MODAL PIX -->
+<div class="modal" id="modalPix">
+  <div class="modalBox">
+    <span class="fechar" onclick="fecharPix()">✖</span>
+    <div id="pixBox"></div>
+  </div>
+</div>
+
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getFirestore, collection, getDocs, addDoc }
+from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDXaehtWsEX75OY1Xat6PdMBUo8QBLcrBs",
+  authDomain: "rifageu.firebaseapp.com",
+  projectId: "rifageu",
+  storageBucket: "rifageu.firebasestorage.app",
+  messagingSenderId: "681099630172",
+  appId: "1:681099630172:web:db0b64ac41d969a93a3899"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const numerosDiv = document.getElementById("numeros");
+const pixBox = document.getElementById("pixBox");
+
+let selecionados = [];
+let vendidos = [];
+
+// ✅ CARREGAR NÚMEROS
+async function carregarNumeros(){
+  const snapshot = await getDocs(collection(db,"rifas"));
+  snapshot.forEach(doc=> vendidos.push(doc.data().numero));
+
+  for(let i=1;i<=100;i++){
+    const div = document.createElement("div");
+    div.className = "numero";
+    div.innerText = i;
+
+    if(vendidos.includes(i)) div.classList.add("ocupado");
+
+    div.onclick = ()=> selecionarNumero(i,div);
+    numerosDiv.appendChild(div);
+  }
+}
+carregarNumeros();
+
+// ✅ MULTI SELEÇÃO
+function selecionarNumero(numero,el){
+  if(el.classList.contains("ocupado")) return;
+
+  if(selecionados.includes(numero)){
+    selecionados = selecionados.filter(n=>n!==numero);
+    el.classList.remove("selecionado");
+  }else{
+    selecionados.push(numero);
+    el.classList.add("selecionado");
+  }
+  atualizarResumo();
+}
+
+function atualizarResumo(){
+  const total = selecionados.length*10;
+  document.getElementById("lista").innerHTML = `
+    <strong>Números:</strong> ${selecionados.join(", ") || "nenhum"}<br>
+    <strong>Total:</strong> R$ ${total},00
+  `;
+}
+
+// ✅ COMPRAR
+window.comprar = async function(){
+  const nome = document.getElementById("nome").value.trim();
+  const whatsapp = document.getElementById("whatsapp").value.trim();
+
+  if(!nome || !whatsapp || selecionados.length === 0){
+    alert("Preencha e selecione os números");
+    return;
+  }
+
+  // CHECAR NOVAMENTE NO FIREBASE
+  const check = await getDocs(collection(db,"rifas"));
+  const vendidosAgora = [];
+  check.forEach(d => vendidosAgora.push(d.data().numero));
+
+  for(const n of selecionados){
+    if(vendidosAgora.includes(n)){
+      alert(`Número ${n} foi vendido agora.`);
+      location.reload();
+      return;
+    }
+  }
+
+  // SALVAR
+  for(const numero of selecionados){
+    await addDoc(collection(db,"rifas"),{
+      nome, whatsapp, numero, pago:false, data:new Date()
+    });
+    vendidos.push(numero);
+  }
+
+  // EXIBIR PIX
+  const total = selecionados.length*10;
+  pixBox.innerHTML = `
+    <h3>✅ Reserva realizada!</h3>
+    <p><strong>Números:</strong> ${selecionados.join(", ")}</p>
+    <p><strong>Total:</strong> R$ ${total},00</p>
+    <p>PIX:</p>
+    <div class="pixChave" id="pix">7199932-6353</div>
+    <button onclick="copiarPix()">Copiar PIX</button>
+    <p class="aviso">Envie o comprovante.</p>
+  `;
+
+  document.getElementById("modalPix").style.display = "flex";
+
+  // MARCAR COMO OCUPADO
+  document.querySelectorAll(".selecionado").forEach(el=>{
+    el.classList.remove("selecionado");
+    el.classList.add("ocupado");
+  });
+
+  selecionados=[];
+  atualizarResumo();
+}
+
+// COPIAR PIX
+window.copiarPix = function(){
+  const pix = document.getElementById("pix").innerText;
+  navigator.clipboard.writeText(pix);
+  alert("PIX copiado!");
+}
+
+// FECHAR MODAL
+window.fecharPix = function(){
+  document.getElementById("modalPix").style.display="none";
+}
+</script>
+
+</body>
+</html>
