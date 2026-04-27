@@ -2,17 +2,109 @@
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
-<title>Rifa Som AMVOX</title>
+<title>Rifa Bolsa + Perfume</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="style.css">
+
+<style>
+body{
+  font-family: Arial;
+  background:#f5f5f5;
+  margin:0;
+}
+.container{
+  max-width:500px;
+  margin:auto;
+  background:white;
+  padding:15px;
+}
+header{
+  text-align:center;
+}
+.produto{
+  width:100%;
+  border-radius:10px;
+}
+h1{
+  font-size:20px;
+}
+.valor{
+  background:#ff4081;
+  color:white;
+  padding:8px;
+  border-radius:5px;
+  margin-top:10px;
+}
+#numeros{
+  display:grid;
+  grid-template-columns: repeat(5,1fr);
+  gap:5px;
+  margin-top:15px;
+}
+.numero{
+  padding:10px;
+  text-align:center;
+  background:#eee;
+  cursor:pointer;
+  border-radius:5px;
+}
+.numero.selecionado{
+  background:#4caf50;
+  color:white;
+}
+.numero.ocupado{
+  background:#999;
+  color:white;
+  pointer-events:none;
+}
+.formulario{
+  margin-top:15px;
+}
+input{
+  width:100%;
+  padding:10px;
+  margin-top:5px;
+}
+button{
+  width:100%;
+  padding:10px;
+  margin-top:10px;
+  background:#4caf50;
+  color:white;
+  border:none;
+}
+.modal{
+  display:none;
+  position:fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  background:rgba(0,0,0,0.7);
+  justify-content:center;
+  align-items:center;
+}
+.modalBox{
+  background:white;
+  padding:20px;
+  border-radius:10px;
+}
+</style>
+
 </head>
 <body>
 
 <div class="container">
 
 <header>
-  <img src="img/seminovo.jpeg" class="produto" alt="Som AMVOX">
-  <h1>🎧 RIFA SOM AMVOX SEMINOVO</h1>
+  <!-- TROQUE A IMAGEM AQUI -->
+  <img src="img/produto.jpg" class="produto">
+
+  <h1>🎁 RIFA ESPECIAL</h1>
+  <h2>Bolsa + Perfume Floratta 💖</h2>
+
+  <p>
+    Concorra a uma linda bolsa + perfume Floratta Love Flower 🌸<br>
+    Um combo perfeito para presentear ou usar!
+  </p>
+
   <div class="valor">R$ 10 por número</div>
 </header>
 
@@ -28,7 +120,7 @@
 <!-- MODAL PIX -->
 <div class="modal" id="modalPix">
   <div class="modalBox">
-    <span class="fechar" onclick="fecharPix()">✖</span>
+    <span onclick="fecharPix()">✖</span>
     <div id="pixBox"></div>
   </div>
 </div>
@@ -41,12 +133,9 @@ import { getFirestore, collection, getDocs, addDoc }
 from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDXaehtWsEX75OY1Xat6PdMBUo8QBLcrBs",
-  authDomain: "rifageu.firebaseapp.com",
-  projectId: "rifageu",
-  storageBucket: "rifageu.firebasestorage.app",
-  messagingSenderId: "681099630172",
-  appId: "1:681099630172:web:db0b64ac41d969a93a3899"
+  apiKey: "SUA_KEY",
+  authDomain: "SEU_DOMINIO",
+  projectId: "SEU_PROJETO"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -58,7 +147,6 @@ const pixBox = document.getElementById("pixBox");
 let selecionados = [];
 let vendidos = [];
 
-// ✅ CARREGAR NÚMEROS
 async function carregarNumeros(){
   const snapshot = await getDocs(collection(db,"rifas"));
   snapshot.forEach(doc=> vendidos.push(doc.data().numero));
@@ -76,7 +164,6 @@ async function carregarNumeros(){
 }
 carregarNumeros();
 
-// ✅ MULTI SELEÇÃO
 function selecionarNumero(numero,el){
   if(el.classList.contains("ocupado")) return;
 
@@ -98,7 +185,6 @@ function atualizarResumo(){
   `;
 }
 
-// ✅ COMPRAR
 window.comprar = async function(){
   const nome = document.getElementById("nome").value.trim();
   const whatsapp = document.getElementById("whatsapp").value.trim();
@@ -108,59 +194,31 @@ window.comprar = async function(){
     return;
   }
 
-  // CHECAR NOVAMENTE NO FIREBASE
-  const check = await getDocs(collection(db,"rifas"));
-  const vendidosAgora = [];
-  check.forEach(d => vendidosAgora.push(d.data().numero));
-
-  for(const n of selecionados){
-    if(vendidosAgora.includes(n)){
-      alert(`Número ${n} foi vendido agora.`);
-      location.reload();
-      return;
-    }
-  }
-
-  // SALVAR
   for(const numero of selecionados){
     await addDoc(collection(db,"rifas"),{
       nome, whatsapp, numero, pago:false, data:new Date()
     });
-    vendidos.push(numero);
   }
 
-  // EXIBIR PIX
   const total = selecionados.length*10;
   pixBox.innerHTML = `
     <h3>✅ Reserva realizada!</h3>
     <p><strong>Números:</strong> ${selecionados.join(", ")}</p>
     <p><strong>Total:</strong> R$ ${total},00</p>
     <p>PIX:</p>
-    <div class="pixChave" id="pix">7199932-6353</div>
+    <div id="pix">71999326353</div>
     <button onclick="copiarPix()">Copiar PIX</button>
-    <p class="aviso">Envie o comprovante.</p>
   `;
 
   document.getElementById("modalPix").style.display = "flex";
-
-  // MARCAR COMO OCUPADO
-  document.querySelectorAll(".selecionado").forEach(el=>{
-    el.classList.remove("selecionado");
-    el.classList.add("ocupado");
-  });
-
-  selecionados=[];
-  atualizarResumo();
 }
 
-// COPIAR PIX
 window.copiarPix = function(){
   const pix = document.getElementById("pix").innerText;
   navigator.clipboard.writeText(pix);
   alert("PIX copiado!");
 }
 
-// FECHAR MODAL
 window.fecharPix = function(){
   document.getElementById("modalPix").style.display="none";
 }
