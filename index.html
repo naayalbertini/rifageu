@@ -204,7 +204,6 @@
 
     button:hover {
       background: #9f486a;
-      transform: translateY(-1px);
     }
 
     .modal {
@@ -226,18 +225,6 @@
       border-radius: 18px;
       text-align: center;
       position: relative;
-      animation: aparecer 0.25s ease;
-    }
-
-    @keyframes aparecer {
-      from {
-        opacity: 0;
-        transform: scale(0.95);
-      }
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
     }
 
     .fechar {
@@ -388,6 +375,7 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+
     import {
       getFirestore,
       collection,
@@ -396,9 +384,12 @@
     } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
-      apiKey: "SUA_KEY",
-      authDomain: "SEU_DOMINIO",
-      projectId: "SEU_PROJETO"
+      apiKey: "AIzaSyDXaehtWsEX75OY1Xat6PdMBUo8QBLcrBs",
+      authDomain: "rifageu.firebaseapp.com",
+      projectId: "rifageu",
+      storageBucket: "rifageu.firebasestorage.app",
+      messagingSenderId: "681099630172",
+      appId: "1:681099630172:web:db0b64ac41d969a93a3899"
     };
 
     const app = initializeApp(firebaseConfig);
@@ -417,12 +408,13 @@
 
     async function carregarNumeros() {
       numerosDiv.innerHTML = "";
+      vendidos = [];
 
       try {
         const snapshot = await getDocs(collection(db, "rifas"));
 
         snapshot.forEach((doc) => {
-          vendidos.push(doc.data().numero);
+          vendidos.push(Number(doc.data().numero));
         });
 
         for (let i = 1; i <= TOTAL_NUMEROS; i++) {
@@ -488,7 +480,7 @@
         const vendidosAgora = [];
 
         snapshot.forEach((doc) => {
-          vendidosAgora.push(doc.data().numero);
+          vendidosAgora.push(Number(doc.data().numero));
         });
 
         for (const numero of selecionados) {
@@ -499,17 +491,19 @@
           }
         }
 
-        for (const numero of selecionados) {
+        const numerosComprados = [...selecionados];
+
+        for (const numero of numerosComprados) {
           await addDoc(collection(db, "rifas"), {
-            nome,
-            whatsapp,
-            numero,
+            nome: nome,
+            whatsapp: whatsapp,
+            numero: numero,
             pago: false,
             data: new Date()
           });
         }
 
-        mostrarPix();
+        mostrarPix(numerosComprados);
 
         document.querySelectorAll(".selecionado").forEach((el) => {
           el.classList.remove("selecionado");
@@ -528,12 +522,12 @@
       }
     };
 
-    function mostrarPix() {
-      const total = selecionados.length * PRECO_NUMERO;
+    function mostrarPix(numerosComprados) {
+      const total = numerosComprados.length * PRECO_NUMERO;
 
       pixBox.innerHTML = `
         <h3>✅ Reserva realizada!</h3>
-        <p><strong>Números:</strong> ${selecionados.join(", ")}</p>
+        <p><strong>Números:</strong> ${numerosComprados.join(", ")}</p>
         <p><strong>Total:</strong> R$ ${total.toFixed(2).replace(".", ",")}</p>
 
         <p>Copie a chave PIX abaixo:</p>
