@@ -1,228 +1,566 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<title>Rifa Bolsa + Perfume</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>Rifa Bolsa + Perfume</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<style>
-body{
-  font-family: Arial;
-  background:#f5f5f5;
-  margin:0;
-}
-.container{
-  max-width:500px;
-  margin:auto;
-  background:white;
-  padding:15px;
-}
-header{
-  text-align:center;
-}
-.produto{
-  width:100%;
-  border-radius:10px;
-}
-h1{
-  font-size:20px;
-}
-.valor{
-  background:#ff4081;
-  color:white;
-  padding:8px;
-  border-radius:5px;
-  margin-top:10px;
-}
-#numeros{
-  display:grid;
-  grid-template-columns: repeat(5,1fr);
-  gap:5px;
-  margin-top:15px;
-}
-.numero{
-  padding:10px;
-  text-align:center;
-  background:#eee;
-  cursor:pointer;
-  border-radius:5px;
-}
-.numero.selecionado{
-  background:#4caf50;
-  color:white;
-}
-.numero.ocupado{
-  background:#999;
-  color:white;
-  pointer-events:none;
-}
-.formulario{
-  margin-top:15px;
-}
-input{
-  width:100%;
-  padding:10px;
-  margin-top:5px;
-}
-button{
-  width:100%;
-  padding:10px;
-  margin-top:10px;
-  background:#4caf50;
-  color:white;
-  border:none;
-}
-.modal{
-  display:none;
-  position:fixed;
-  top:0; left:0;
-  width:100%; height:100%;
-  background:rgba(0,0,0,0.7);
-  justify-content:center;
-  align-items:center;
-}
-.modalBox{
-  background:white;
-  padding:20px;
-  border-radius:10px;
-}
-</style>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #f8e8ef, #f5f5f5);
+      color: #333;
+      min-height: 100vh;
+      padding: 15px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 720px;
+      margin: auto;
+      background: #fff;
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+    }
+
+    header {
+      text-align: center;
+    }
+
+    .produto {
+      width: 100%;
+      max-height: 420px;
+      object-fit: cover;
+      border-radius: 18px;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      font-size: 28px;
+      color: #b85b7c;
+      margin-bottom: 8px;
+    }
+
+    h2 {
+      font-size: 22px;
+      color: #5c4033;
+      margin-bottom: 12px;
+    }
+
+    .descricao {
+      font-size: 16px;
+      line-height: 1.5;
+      margin-bottom: 15px;
+    }
+
+    .valor {
+      display: inline-block;
+      background: #b85b7c;
+      color: white;
+      padding: 12px 22px;
+      border-radius: 30px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    .secao-titulo {
+      margin: 20px 0 10px;
+      font-size: 18px;
+      color: #5c4033;
+      text-align: center;
+    }
+
+    #numeros {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 8px;
+      margin-top: 15px;
+    }
+
+    .numero {
+      background: #f1f1f1;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 12px 0;
+      text-align: center;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s;
+      user-select: none;
+    }
+
+    .numero:hover {
+      background: #f7dce7;
+      transform: scale(1.05);
+    }
+
+    .numero.selecionado {
+      background: #2ecc71;
+      color: white;
+      border-color: #27ae60;
+    }
+
+    .numero.ocupado {
+      background: #999;
+      color: white;
+      cursor: not-allowed;
+      pointer-events: none;
+      opacity: 0.7;
+    }
+
+    .legenda {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+      margin-top: 15px;
+      font-size: 14px;
+    }
+
+    .item-legenda {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .cor {
+      width: 15px;
+      height: 15px;
+      border-radius: 4px;
+      display: inline-block;
+    }
+
+    .livre {
+      background: #f1f1f1;
+      border: 1px solid #ccc;
+    }
+
+    .sel {
+      background: #2ecc71;
+    }
+
+    .ocup {
+      background: #999;
+    }
+
+    .formulario {
+      margin-top: 25px;
+      background: #fafafa;
+      padding: 18px;
+      border-radius: 16px;
+      border: 1px solid #eee;
+    }
+
+    .formulario label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+      color: #5c4033;
+    }
+
+    input {
+      width: 100%;
+      padding: 13px;
+      margin-bottom: 14px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #b85b7c;
+      box-shadow: 0 0 0 2px rgba(184,91,124,0.15);
+    }
+
+    #lista {
+      background: white;
+      padding: 12px;
+      border-radius: 10px;
+      margin-bottom: 14px;
+      border: 1px dashed #b85b7c;
+      line-height: 1.6;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      background: #b85b7c;
+      color: white;
+      font-size: 17px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      background: #9f486a;
+      transform: translateY(-1px);
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.65);
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      z-index: 999;
+    }
+
+    .modalBox {
+      width: 100%;
+      max-width: 420px;
+      background: white;
+      padding: 22px;
+      border-radius: 18px;
+      text-align: center;
+      position: relative;
+      animation: aparecer 0.25s ease;
+    }
+
+    @keyframes aparecer {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .fechar {
+      position: absolute;
+      top: 12px;
+      right: 15px;
+      cursor: pointer;
+      font-size: 20px;
+      color: #777;
+    }
+
+    .pixChave {
+      background: #f5f5f5;
+      padding: 12px;
+      border-radius: 10px;
+      margin: 12px 0;
+      font-weight: bold;
+      word-break: break-word;
+    }
+
+    .aviso {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #777;
+    }
+
+    footer {
+      margin-top: 18px;
+      text-align: center;
+      font-size: 13px;
+      color: #777;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 8px;
+      }
+
+      .container {
+        padding: 14px;
+        border-radius: 14px;
+      }
+
+      h1 {
+        font-size: 23px;
+      }
+
+      h2 {
+        font-size: 18px;
+      }
+
+      .descricao {
+        font-size: 15px;
+      }
+
+      #numeros {
+        grid-template-columns: repeat(5, 1fr);
+        gap: 7px;
+      }
+
+      .numero {
+        padding: 11px 0;
+        font-size: 15px;
+      }
+
+      .formulario {
+        padding: 14px;
+      }
+
+      input, button {
+        font-size: 15px;
+      }
+
+      .produto {
+        max-height: 300px;
+      }
+    }
+
+    @media (max-width: 360px) {
+      #numeros {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-<div class="container">
+  <div class="container">
 
-<header>
-  <!-- TROQUE A IMAGEM AQUI -->
-  <img src="img/image.png" class="produto">
+    <header>
+      <img src="img/image.png" class="produto" alt="Bolsa e perfume Floratta">
 
-  <h1>🎁 RIFA ESPECIAL</h1>
-  <h2>Bolsa + Perfume Floratta 💖</h2>
+      <h1>🎁 Rifa Especial</h1>
+      <h2>Bolsa + Perfume Floratta 💖</h2>
 
-  <p>
-    Concorra a uma linda bolsa + perfume Floratta Love Flower 🌸<br>
-    Um combo perfeito para presentear ou usar!
-  </p>
+      <p class="descricao">
+        Concorra a uma linda bolsa + perfume Floratta Love Flower 🌸<br>
+        Um combo perfeito para presentear ou usar!
+      </p>
 
-  <div class="valor">R$ 10 por número</div>
-</header>
+      <div class="valor">R$ 10,00 por número</div>
+    </header>
 
-<div id="numeros"></div>
+    <h3 class="secao-titulo">Escolha seus números</h3>
 
-<div class="formulario">
-  <input id="nome" placeholder="Nome completo">
-  <input id="whatsapp" placeholder="WhatsApp com DDD">
-  <div id="lista"></div>
-  <button onclick="comprar()">Reservar números</button>
-</div>
+    <div id="numeros"></div>
 
-<!-- MODAL PIX -->
-<div class="modal" id="modalPix">
-  <div class="modalBox">
-    <span onclick="fecharPix()">✖</span>
-    <div id="pixBox"></div>
+    <div class="legenda">
+      <div class="item-legenda">
+        <span class="cor livre"></span> Livre
+      </div>
+      <div class="item-legenda">
+        <span class="cor sel"></span> Selecionado
+      </div>
+      <div class="item-legenda">
+        <span class="cor ocup"></span> Ocupado
+      </div>
+    </div>
+
+    <div class="formulario">
+      <label for="nome">Nome completo</label>
+      <input id="nome" type="text" placeholder="Digite seu nome completo">
+
+      <label for="whatsapp">WhatsApp com DDD</label>
+      <input id="whatsapp" type="tel" placeholder="Ex: 71999999999">
+
+      <div id="lista">
+        <strong>Números:</strong> nenhum<br>
+        <strong>Total:</strong> R$ 0,00
+      </div>
+
+      <button onclick="comprar()">Reservar números</button>
+    </div>
+
+    <footer>
+      Desenvolvido por Nay Cordeiro
+    </footer>
+
   </div>
-</div>
 
-</div>
+  <div class="modal" id="modalPix">
+    <div class="modalBox">
+      <span class="fechar" onclick="fecharPix()">✖</span>
+      <div id="pixBox"></div>
+    </div>
+  </div>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getFirestore, collection, getDocs, addDoc }
-from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import {
+      getFirestore,
+      collection,
+      getDocs,
+      addDoc
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-const firebaseConfig = {
-  apiKey: "SUA_KEY",
-  authDomain: "SEU_DOMINIO",
-  projectId: "SEU_PROJETO"
-};
+    const firebaseConfig = {
+      apiKey: "SUA_KEY",
+      authDomain: "SEU_DOMINIO",
+      projectId: "SEU_PROJETO"
+    };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-const numerosDiv = document.getElementById("numeros");
-const pixBox = document.getElementById("pixBox");
+    const PRECO_NUMERO = 10;
+    const TOTAL_NUMEROS = 100;
+    const CHAVE_PIX = "71999326353";
 
-let selecionados = [];
-let vendidos = [];
+    const numerosDiv = document.getElementById("numeros");
+    const pixBox = document.getElementById("pixBox");
+    const lista = document.getElementById("lista");
 
-async function carregarNumeros(){
-  const snapshot = await getDocs(collection(db,"rifas"));
-  snapshot.forEach(doc=> vendidos.push(doc.data().numero));
+    let selecionados = [];
+    let vendidos = [];
 
-  for(let i=1;i<=100;i++){
-    const div = document.createElement("div");
-    div.className = "numero";
-    div.innerText = i;
+    async function carregarNumeros() {
+      numerosDiv.innerHTML = "";
 
-    if(vendidos.includes(i)) div.classList.add("ocupado");
+      try {
+        const snapshot = await getDocs(collection(db, "rifas"));
 
-    div.onclick = ()=> selecionarNumero(i,div);
-    numerosDiv.appendChild(div);
-  }
-}
-carregarNumeros();
+        snapshot.forEach((doc) => {
+          vendidos.push(doc.data().numero);
+        });
 
-function selecionarNumero(numero,el){
-  if(el.classList.contains("ocupado")) return;
+        for (let i = 1; i <= TOTAL_NUMEROS; i++) {
+          criarNumero(i);
+        }
 
-  if(selecionados.includes(numero)){
-    selecionados = selecionados.filter(n=>n!==numero);
-    el.classList.remove("selecionado");
-  }else{
-    selecionados.push(numero);
-    el.classList.add("selecionado");
-  }
-  atualizarResumo();
-}
+      } catch (erro) {
+        console.error("Erro ao carregar números:", erro);
+        alert("Erro ao carregar números. Verifique o Firebase.");
+      }
+    }
 
-function atualizarResumo(){
-  const total = selecionados.length*10;
-  document.getElementById("lista").innerHTML = `
-    <strong>Números:</strong> ${selecionados.join(", ") || "nenhum"}<br>
-    <strong>Total:</strong> R$ ${total},00
-  `;
-}
+    function criarNumero(numero) {
+      const div = document.createElement("div");
 
-window.comprar = async function(){
-  const nome = document.getElementById("nome").value.trim();
-  const whatsapp = document.getElementById("whatsapp").value.trim();
+      div.className = "numero";
+      div.innerText = numero;
 
-  if(!nome || !whatsapp || selecionados.length === 0){
-    alert("Preencha e selecione os números");
-    return;
-  }
+      if (vendidos.includes(numero)) {
+        div.classList.add("ocupado");
+      }
 
-  for(const numero of selecionados){
-    await addDoc(collection(db,"rifas"),{
-      nome, whatsapp, numero, pago:false, data:new Date()
-    });
-  }
+      div.addEventListener("click", () => selecionarNumero(numero, div));
 
-  const total = selecionados.length*10;
-  pixBox.innerHTML = `
-    <h3>✅ Reserva realizada!</h3>
-    <p><strong>Números:</strong> ${selecionados.join(", ")}</p>
-    <p><strong>Total:</strong> R$ ${total},00</p>
-    <p>PIX:</p>
-    <div id="pix">71999326353</div>
-    <button onclick="copiarPix()">Copiar PIX</button>
-  `;
+      numerosDiv.appendChild(div);
+    }
 
-  document.getElementById("modalPix").style.display = "flex";
-}
+    function selecionarNumero(numero, elemento) {
+      if (elemento.classList.contains("ocupado")) return;
 
-window.copiarPix = function(){
-  const pix = document.getElementById("pix").innerText;
-  navigator.clipboard.writeText(pix);
-  alert("PIX copiado!");
-}
+      if (selecionados.includes(numero)) {
+        selecionados = selecionados.filter((n) => n !== numero);
+        elemento.classList.remove("selecionado");
+      } else {
+        selecionados.push(numero);
+        elemento.classList.add("selecionado");
+      }
 
-window.fecharPix = function(){
-  document.getElementById("modalPix").style.display="none";
-}
-</script>
+      selecionados.sort((a, b) => a - b);
+      atualizarResumo();
+    }
+
+    function atualizarResumo() {
+      const total = selecionados.length * PRECO_NUMERO;
+
+      lista.innerHTML = `
+        <strong>Números:</strong> ${selecionados.join(", ") || "nenhum"}<br>
+        <strong>Total:</strong> R$ ${total.toFixed(2).replace(".", ",")}
+      `;
+    }
+
+    window.comprar = async function () {
+      const nome = document.getElementById("nome").value.trim();
+      const whatsapp = document.getElementById("whatsapp").value.trim();
+
+      if (!nome || !whatsapp || selecionados.length === 0) {
+        alert("Preencha seu nome, WhatsApp e selecione pelo menos um número.");
+        return;
+      }
+
+      try {
+        const snapshot = await getDocs(collection(db, "rifas"));
+        const vendidosAgora = [];
+
+        snapshot.forEach((doc) => {
+          vendidosAgora.push(doc.data().numero);
+        });
+
+        for (const numero of selecionados) {
+          if (vendidosAgora.includes(numero)) {
+            alert(`O número ${numero} acabou de ser reservado por outra pessoa.`);
+            location.reload();
+            return;
+          }
+        }
+
+        for (const numero of selecionados) {
+          await addDoc(collection(db, "rifas"), {
+            nome,
+            whatsapp,
+            numero,
+            pago: false,
+            data: new Date()
+          });
+        }
+
+        mostrarPix();
+
+        document.querySelectorAll(".selecionado").forEach((el) => {
+          el.classList.remove("selecionado");
+          el.classList.add("ocupado");
+        });
+
+        selecionados = [];
+        atualizarResumo();
+
+        document.getElementById("nome").value = "";
+        document.getElementById("whatsapp").value = "";
+
+      } catch (erro) {
+        console.error("Erro ao reservar:", erro);
+        alert("Erro ao reservar. Verifique as regras do Firebase.");
+      }
+    };
+
+    function mostrarPix() {
+      const total = selecionados.length * PRECO_NUMERO;
+
+      pixBox.innerHTML = `
+        <h3>✅ Reserva realizada!</h3>
+        <p><strong>Números:</strong> ${selecionados.join(", ")}</p>
+        <p><strong>Total:</strong> R$ ${total.toFixed(2).replace(".", ",")}</p>
+
+        <p>Copie a chave PIX abaixo:</p>
+        <div class="pixChave" id="pix">${CHAVE_PIX}</div>
+
+        <button onclick="copiarPix()">Copiar PIX</button>
+
+        <p class="aviso">
+          Após o pagamento, envie o comprovante para confirmar sua participação.
+        </p>
+      `;
+
+      document.getElementById("modalPix").style.display = "flex";
+    }
+
+    window.copiarPix = function () {
+      const pix = document.getElementById("pix").innerText;
+      navigator.clipboard.writeText(pix);
+      alert("PIX copiado!");
+    };
+
+    window.fecharPix = function () {
+      document.getElementById("modalPix").style.display = "none";
+    };
+
+    carregarNumeros();
+  </script>
 
 </body>
 </html>
