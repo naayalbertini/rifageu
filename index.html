@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
-  <title>Rifa Epilação + Bolsa</title>
+  <title>Rifa Especial | Bolsa + Epilação + Hidratação</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
@@ -12,69 +12,115 @@
       box-sizing: border-box;
     }
 
+    :root {
+      --rosa: #b85b7c;
+      --rosa-escuro: #9f486a;
+      --rosa-claro: #f8e8ef;
+      --marrom: #5c4033;
+      --dourado: #c99a4a;
+      --verde: #2ecc71;
+      --cinza: #999;
+      --branco: #ffffff;
+      --texto: #333333;
+    }
+
     body {
       font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #f8e8ef, #f5f5f5);
-      color: #333;
+      background:
+        radial-gradient(circle at top left, rgba(184,91,124,0.18), transparent 35%),
+        linear-gradient(135deg, #fff7fa, #f5f0ed);
+      color: var(--texto);
       min-height: 100vh;
-      padding: 15px;
+      padding: 16px;
     }
 
     .container {
       width: 100%;
-      max-width: 720px;
+      max-width: 760px;
       margin: auto;
-      background: #fff;
-      border-radius: 20px;
-      padding: 20px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+      background: rgba(255,255,255,0.96);
+      border-radius: 24px;
+      padding: 22px;
+      box-shadow: 0 18px 45px rgba(92,64,51,0.16);
+      border: 1px solid rgba(184,91,124,0.12);
+      overflow: hidden;
     }
 
     header {
       text-align: center;
     }
 
+    .tag {
+      display: inline-block;
+      background: #fff3f7;
+      color: var(--rosa);
+      border: 1px solid rgba(184,91,124,0.22);
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+      margin-bottom: 14px;
+      text-transform: uppercase;
+    }
+
     .produto {
       width: 100%;
-      max-height: 420px;
-      object-fit: cover;
-      border-radius: 18px;
+      height: auto;
+      max-width: 100%;
+      display: block;
+      object-fit: contain;
+      border-radius: 20px;
       margin-bottom: 18px;
+      background: #fff;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
     }
 
     h1 {
-      font-size: 28px;
-      color: #b85b7c;
+      font-size: 30px;
+      color: var(--rosa);
       margin-bottom: 8px;
+      line-height: 1.15;
     }
 
     h2 {
       font-size: 22px;
-      color: #5c4033;
+      color: var(--marrom);
       margin-bottom: 12px;
+      line-height: 1.3;
     }
 
     .descricao {
       font-size: 16px;
-      line-height: 1.5;
-      margin-bottom: 15px;
+      line-height: 1.6;
+      margin: 0 auto 16px;
+      max-width: 620px;
+      color: #5f514b;
     }
 
     .valor {
       display: inline-block;
-      background: #b85b7c;
+      background: linear-gradient(135deg, var(--rosa), var(--rosa-escuro));
       color: white;
-      padding: 12px 22px;
+      padding: 13px 24px;
       border-radius: 30px;
       font-weight: bold;
       margin-bottom: 20px;
+      box-shadow: 0 8px 18px rgba(184,91,124,0.28);
     }
 
     .secao-titulo {
-      margin: 20px 0 10px;
-      font-size: 18px;
-      color: #5c4033;
+      margin: 22px 0 10px;
+      font-size: 19px;
+      color: var(--marrom);
       text-align: center;
+    }
+
+    .subtexto {
+      text-align: center;
+      font-size: 14px;
+      color: #777;
+      margin-bottom: 12px;
     }
 
     #numeros {
@@ -85,34 +131,36 @@
     }
 
     .numero {
-      background: #f1f1f1;
-      border: 1px solid #ddd;
-      border-radius: 10px;
+      background: #fff;
+      border: 1px solid #eadde2;
+      border-radius: 12px;
       padding: 12px 0;
       text-align: center;
       font-weight: bold;
       cursor: pointer;
       transition: 0.2s;
       user-select: none;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.04);
     }
 
     .numero:hover {
       background: #f7dce7;
-      transform: scale(1.05);
+      transform: translateY(-2px);
     }
 
     .numero.selecionado {
-      background: #2ecc71;
+      background: var(--verde);
       color: white;
       border-color: #27ae60;
     }
 
     .numero.ocupado {
-      background: #999;
+      background: var(--cinza);
       color: white;
       cursor: not-allowed;
       pointer-events: none;
-      opacity: 0.7;
+      opacity: 0.75;
+      box-shadow: none;
     }
 
     .legenda {
@@ -120,7 +168,7 @@
       justify-content: center;
       gap: 15px;
       flex-wrap: wrap;
-      margin-top: 15px;
+      margin-top: 16px;
       font-size: 14px;
     }
 
@@ -138,72 +186,84 @@
     }
 
     .livre {
-      background: #f1f1f1;
+      background: #fff;
       border: 1px solid #ccc;
     }
 
     .sel {
-      background: #2ecc71;
+      background: var(--verde);
     }
 
     .ocup {
-      background: #999;
+      background: var(--cinza);
     }
 
     .formulario {
-      margin-top: 25px;
-      background: #fafafa;
-      padding: 18px;
-      border-radius: 16px;
-      border: 1px solid #eee;
+      margin-top: 26px;
+      background: #fffafa;
+      padding: 20px;
+      border-radius: 18px;
+      border: 1px solid rgba(184,91,124,0.14);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.6);
+    }
+
+    .formulario h3 {
+      color: var(--marrom);
+      text-align: center;
+      margin-bottom: 15px;
+      font-size: 20px;
     }
 
     .formulario label {
       display: block;
       margin-bottom: 6px;
       font-weight: bold;
-      color: #5c4033;
+      color: var(--marrom);
     }
 
     input {
       width: 100%;
-      padding: 13px;
+      padding: 14px;
       margin-bottom: 14px;
-      border: 1px solid #ddd;
-      border-radius: 10px;
+      border: 1px solid #e1d5d8;
+      border-radius: 12px;
       font-size: 16px;
+      background: #fff;
     }
 
     input:focus {
       outline: none;
-      border-color: #b85b7c;
-      box-shadow: 0 0 0 2px rgba(184,91,124,0.15);
+      border-color: var(--rosa);
+      box-shadow: 0 0 0 3px rgba(184,91,124,0.14);
     }
 
     #lista {
       background: white;
-      padding: 12px;
-      border-radius: 10px;
+      padding: 14px;
+      border-radius: 12px;
       margin-bottom: 14px;
-      border: 1px dashed #b85b7c;
-      line-height: 1.6;
+      border: 1px dashed var(--rosa);
+      line-height: 1.7;
+      color: #4b403d;
     }
 
     button {
       width: 100%;
-      padding: 14px;
+      padding: 15px;
       border: none;
-      border-radius: 12px;
-      background: #b85b7c;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--rosa), var(--rosa-escuro));
       color: white;
       font-size: 17px;
       font-weight: bold;
       cursor: pointer;
       transition: 0.2s;
+      box-shadow: 0 8px 18px rgba(184,91,124,0.25);
     }
 
     button:hover {
-      background: #9f486a;
+      transform: translateY(-1px);
+      filter: brightness(0.96);
     }
 
     .modal {
@@ -219,12 +279,13 @@
 
     .modalBox {
       width: 100%;
-      max-width: 420px;
+      max-width: 430px;
       background: white;
-      padding: 22px;
-      border-radius: 18px;
+      padding: 24px;
+      border-radius: 20px;
       text-align: center;
       position: relative;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.28);
     }
 
     .fechar {
@@ -238,21 +299,23 @@
 
     .pixChave {
       background: #f5f5f5;
-      padding: 12px;
-      border-radius: 10px;
+      padding: 13px;
+      border-radius: 12px;
       margin: 12px 0;
       font-weight: bold;
       word-break: break-word;
+      border: 1px solid #eee;
     }
 
     .aviso {
-      margin-top: 10px;
+      margin-top: 12px;
       font-size: 14px;
       color: #777;
+      line-height: 1.5;
     }
 
     footer {
-      margin-top: 18px;
+      margin-top: 20px;
       text-align: center;
       font-size: 13px;
       color: #777;
@@ -265,11 +328,11 @@
 
       .container {
         padding: 14px;
-        border-radius: 14px;
+        border-radius: 18px;
       }
 
       h1 {
-        font-size: 23px;
+        font-size: 24px;
       }
 
       h2 {
@@ -286,20 +349,16 @@
       }
 
       .numero {
-        padding: 11px 0;
+        padding: 12px 0;
         font-size: 15px;
       }
 
       .formulario {
-        padding: 14px;
+        padding: 15px;
       }
 
       input, button {
         font-size: 15px;
-      }
-
-      .produto {
-        max-height: 300px;
       }
     }
 
@@ -316,20 +375,23 @@
   <div class="container">
 
     <header>
-      <img src="img/image (6).png" class="produto" alt="Bolsa e perfume Floratta">
+      <div class="tag">Sorteio especial</div>
 
-      <h1>🎁 Rifa Especial dia dos Namorados</h1>
-      <h2>Bolsa + Hidratante + Epilação 💖</h2>
+      <img src="img/image (6).png" class="produto" alt="Bolsa + Epilação + Hidratação">
+
+      <h1>🎁 Concorra a uma linda bolsa</h1>
+      <h2>Bolsa + Epilação + Hidratação ✨</h2>
 
       <p class="descricao">
-        Concorra a uma linda bolsa + Epilação + Hidratação 🌸<br>
-        Um combo perfeito para renovar sua autoestima e cuidar da sua beleza!
+        Garanta seus números e participe desse combo especial de beleza e autocuidado.
+        Um presente perfeito para renovar sua autoestima!
       </p>
 
       <div class="valor">R$ 10,00 por número</div>
     </header>
 
     <h3 class="secao-titulo">Escolha seus números</h3>
+    <p class="subtexto">Clique nos números disponíveis para reservar.</p>
 
     <div id="numeros"></div>
 
@@ -346,6 +408,8 @@
     </div>
 
     <div class="formulario">
+      <h3>Finalizar reserva</h3>
+
       <label for="nome">Nome completo</label>
       <input id="nome" type="text" placeholder="Digite seu nome completo">
 
@@ -431,7 +495,7 @@
       const div = document.createElement("div");
 
       div.className = "numero";
-      div.innerText = numero;
+      div.innerText = String(numero).padStart(2, "0");
 
       if (vendidos.includes(numero)) {
         div.classList.add("ocupado");
@@ -459,9 +523,10 @@
 
     function atualizarResumo() {
       const total = selecionados.length * PRECO_NUMERO;
+      const numerosFormatados = selecionados.map((n) => String(n).padStart(2, "0")).join(", ");
 
       lista.innerHTML = `
-        <strong>Números:</strong> ${selecionados.join(", ") || "nenhum"}<br>
+        <strong>Números:</strong> ${numerosFormatados || "nenhum"}<br>
         <strong>Total:</strong> R$ ${total.toFixed(2).replace(".", ",")}
       `;
     }
@@ -485,7 +550,7 @@
 
         for (const numero of selecionados) {
           if (vendidosAgora.includes(numero)) {
-            alert(`O número ${numero} acabou de ser reservado por outra pessoa.`);
+            alert(`O número ${String(numero).padStart(2, "0")} acabou de ser reservado por outra pessoa.`);
             location.reload();
             return;
           }
@@ -524,10 +589,11 @@
 
     function mostrarPix(numerosComprados) {
       const total = numerosComprados.length * PRECO_NUMERO;
+      const numerosFormatados = numerosComprados.map((n) => String(n).padStart(2, "0")).join(", ");
 
       pixBox.innerHTML = `
         <h3>✅ Reserva realizada!</h3>
-        <p><strong>Números:</strong> ${numerosComprados.join(", ")}</p>
+        <p><strong>Números:</strong> ${numerosFormatados}</p>
         <p><strong>Total:</strong> R$ ${total.toFixed(2).replace(".", ",")}</p>
 
         <p>Copie a chave PIX abaixo:</p>
